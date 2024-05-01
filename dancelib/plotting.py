@@ -1,9 +1,11 @@
 import numpy as np
+import pylab
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from matplotlib.ticker import FormatStrFormatter, AutoMinorLocator
 from matplotlib import patches
 from matplotlib.font_manager import FontProperties
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 def plot_images(images, titles, pixel_scale, gamma=0.45, vmax_factors=None):
     """
@@ -155,5 +157,68 @@ def plot_image_comparison_zoom(images, titles, pixel_scale, vmax_factors, zoom_r
                 spine.set_linewidth(4)
 
     fig.set_facecolor('black')
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_precision_recall(recall_avg, precision_avg, thresh_avg, recall_infer, precision_infer, thresh_infer, figsize=(5,5)):
+    """
+    Plots a precision-recall scatter plot for average and inferred frame data.
+
+    Parameters:
+    - recall_avg: list of float
+      Recall values for average frames.
+    - precision_avg: list of float
+      Precision values for average frames.
+    - thresh_avg: list of float
+      Threshold values for average frames.
+    - recall_infer: list of float
+      Recall values for inferred frames.
+    - precision_infer: list of float
+      Precision values for inferred frames.
+    - thresh_infer: list of float
+      Threshold values for inferred frames.
+    - figsize: tuple of int
+      Figure size.
+    """
+    # Convert lists to numpy arrays if not already np.ndarray
+    if not isinstance(recall_avg, np.ndarray):
+        recall_avg = np.array(recall_avg)
+    if not isinstance(precision_avg, np.ndarray):
+        precision_avg = np.array(precision_avg)
+    if not isinstance(thresh_avg, np.ndarray):
+        thresh_avg = np.array(thresh_avg)
+    if not isinstance(recall_infer, np.ndarray):
+        recall_infer = np.array(recall_infer)
+    if not isinstance(precision_infer, np.ndarray):
+        precision_infer = np.array(precision_infer)
+    if not isinstance(thresh_infer, np.ndarray):
+        thresh_infer = np.array(thresh_infer)
+    
+    fig, ax = plt.subplots(1, 1, figsize=figsize)
+
+    # Scatter plot for average and inferred frames
+    sc_avg = ax.scatter(recall_avg*100, precision_avg*100, marker='o', label='30s. avg. frame', c=thresh_avg, cmap='Blues')
+    sc_infer = ax.scatter(recall_infer*100, precision_infer*100, marker='D', label='30s. inferred frame', c=thresh_infer, cmap='Oranges')
+
+    # Axis labels
+    ax.set_xlabel('\% of stars recovered', size=20)
+    ax.set_ylabel('Precision (\%)', size=20)
+    
+    # Add colorbar
+    cbaxes = inset_axes(ax, width="40%", height="3%", bbox_to_anchor=(.5, .07, .6, .5), bbox_transform=ax.transAxes, loc=8)
+    cb = fig.colorbar(sc_infer, cax=cbaxes, orientation='horizontal')
+    cb.ax.set_title('Detection\nThreshold', size=15)
+    cb.ax.tick_params(labelsize=15)
+    for label in cb.ax.get_xaxis().get_ticklabels():
+        label.set_size(8)
+
+    # Custom legend
+    line1 = pylab.Line2D(range(1), range(1), color='white', marker='D', markersize=10, markerfacecolor="orange", alpha=1.0)
+    line2 = pylab.Line2D(range(1), range(1), color='white', marker='o', markersize=10, markerfacecolor="blue", alpha=1.0)
+    ax.legend((line1, line2), ('30s. inferred frame', '30s. avg. frame'), numpoints=1, loc='lower left', fontsize=12, frameon=False)
+
+    #ax.set_ylim((93, 102))  # Set the y-axis limits
+
     plt.tight_layout()
     plt.show()
