@@ -1,6 +1,12 @@
 import torch
 import numpy as np
+from blended_tiling import TilingModule
 
+def anscombe_transform(x):
+    return 2 * torch.sqrt(x + (3./8.))
+
+def inv_anscombe_transform(x):
+    return (1./4.)*x**2 - (1./8.) + (1./4.)*np.sqrt(3./2.)*x**-1 - (11./8.)*x**-2 + (5./8.)*np.sqrt(3./2.)*x**-3
 
 def compute_mad(x, med=None):
     if isinstance(x, torch.Tensor):
@@ -50,3 +56,4 @@ def median_mad(data):
 
     else:
         raise TypeError("Input must be a PyTorch Tensor or NumPy array")
+

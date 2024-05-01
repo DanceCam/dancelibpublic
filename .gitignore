@@ -1,2 +1,3 @@
 /.venv/
-/data/M92sim.1024x1024x160.fits
+/data/
+/model-weights/
