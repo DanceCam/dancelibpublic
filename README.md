@@ -2,6 +2,7 @@
 The public repository for **DanceCam**, showcasing some of the features of our atmospheric turbulence mitigation method.
 
 The **project website** is available at https://dancecam.info.
+
 The **paper** is available [here](https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/stae1018/7654005).
 
 
